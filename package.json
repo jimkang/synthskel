@@ -1,0 +1,24 @@
+{
+  "name": "synthskel",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "eslint": "^8.42.0",
+    "prettier": "^2.8.8",
+    "vite": "^4.3.9"
+  },
+  "dependencies": {
+    "@jimkang/randomid": "^1.1.0",
+    "audio-context-singleton": "^1.2.4",
+    "basic-browser-request": "^10.0.2",
+    "d3-queue": "^3.0.7",
+    "errorback-promise": "^1.0.0",
+    "handle-error-web": "^1.0.1",
+    "oknok": "^3.0.0",
+    "request-body-mover": "^1.0.1"
+  }
+}
