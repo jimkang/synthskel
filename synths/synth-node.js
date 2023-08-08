@@ -84,14 +84,35 @@ export class Envelope extends SynthNode {
     }
     this.playCurve = params.playCurve;
   }
-  play() {
+  play({ startTime }) {
+    this.node.gain.value = 0;
     if (this.playCurve) {
       this.node.gain.setValueCurveAtTime(
         this.playCurve,
-        this.ctx.currentTime,
+        startTime,
         this.envelopeLength
       );
     }
+    this.envelopeCompletionTime = startTime + this.envelopeLength * 1.1;
+  }
+  cancelScheduledRamps() {
+    this.node.gain.cancelScheduledValues(0);
+  }
+  linearRampTo(fadeSeconds, value) {
+    this.node.gain.cancelScheduledValues(0);
+
+    // If an envelope is still running its curve, that needs to finish first.
+    var secondsUntilEnvelopeCompletion = 0;
+    const now = this.ctx.currentTime;
+    if (now < this.envelopeCompletionTime) {
+      secondsUntilEnvelopeCompletion = this.envelopeCompletionTime - now;
+    }
+    // We will get a exception if we try to add a ramp event while the previous
+    // value curve is still going.
+    setTimeout(
+      () => this.node.gain.linearRampToValueAtTime(value, fadeSeconds),
+      secondsUntilEnvelopeCompletion * 1000
+    );
   }
 }
 
