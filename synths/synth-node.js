@@ -227,7 +227,11 @@ export class Sampler extends SynthNode {
       durationSecs
     );
   }
-  play({ startTime, loopStart, duration }) {
+  play({ startTime, loopStart, duration, indefinite }) {
+    if (indefinite) {
+      this.node.start(+startTime || 0);
+      return;
+    }
     this.node.start(+startTime || 0, loopStart || 0, +duration);
   }
   stop() {
