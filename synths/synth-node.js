@@ -25,7 +25,12 @@ export class SynthNode {
       throw new Error('No synthNode or raw AudioNode passed to connect.');
     }
   }
-  play({ startTime, endTime }) {
+  play({
+    startTime = 0,
+    endTime = undefined,
+    actualStartTime = 0,
+    indefinite = false,
+  }) {
     try {
       this.node.start(startTime);
       if (!isNaN(endTime)) {
@@ -265,6 +270,9 @@ export class Panner extends SynthNode {
     super(ctx, params);
     this.node = new StereoPannerNode(this.ctx, { pan: +params.pan });
   }
+  node() {
+    return this.node;
+  }
   cancelScheduledRamps() {
     this.node.pan.cancelScheduledValues(this.ctx.currentTime);
   }
@@ -280,7 +288,12 @@ export class Panner extends SynthNode {
       isNaN(this.params.rampSeconds) ? 0.1 : +this.params.rampSeconds
     );
   }
-  play() {}
+  play({
+    startTime = 0,
+    endTime = undefined,
+    actualStartTime = 0,
+    indefinite = false,
+  }) {}
 }
 
 // Warning: cancelScheduledValues doesn't cover this.
