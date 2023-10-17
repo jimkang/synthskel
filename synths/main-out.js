@@ -15,7 +15,7 @@ export function MainOut({
     attack,
   });
   if (skipCompressor) {
-    mainOutNode.connect(ctx.destination);
+    mainOutNode.connect({ synthNode: null, audioNode: ctx.destination });
   } else {
     mainOutNode.connect({ synthNode: null, audioNode: compressor });
     compressor.connect(ctx.destination);
