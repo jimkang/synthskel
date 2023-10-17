@@ -1,13 +1,24 @@
 import { Gain } from './synth-node';
 
-export function MainOut({ ctx }) {
-  var mainOutNode = new Gain(ctx, { gain: 1.0 });
+export function MainOut({
+  ctx,
+  gain = 1.0,
+  skipCompressor = false,
+  threshold = -14,
+  ratio = 8,
+  attack = 0.1,
+}) {
+  var mainOutNode = new Gain(ctx, { gain });
   var compressor = new DynamicsCompressorNode(ctx, {
-    threshold: -14,
-    ratio: 8,
-    attack: 0.1,
+    threshold,
+    ratio,
+    attack,
   });
-  mainOutNode.connect({ synthNode: null, audioNode: compressor });
-  compressor.connect(ctx.destination);
+  if (skipCompressor) {
+    mainOutNode.connect(ctx.destination);
+  } else {
+    mainOutNode.connect({ synthNode: null, audioNode: compressor });
+    compressor.connect(ctx.destination);
+  }
   return mainOutNode;
 }

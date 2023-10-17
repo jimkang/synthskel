@@ -1,10 +1,4 @@
-import {
-  Sampler,
-  Envelope,
-  Panner,
-  SynthNode,
-  Gain,
-} from '../synths/synth-node';
+import { Sampler, Envelope, Panner, Gain } from '../synths/synth-node';
 // import { ScoreEvent, PlayEvent } from '../types';
 
 export function playPlayEvent({ playEvent, startTime = 0 }) {
