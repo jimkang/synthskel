@@ -258,7 +258,12 @@ export class Sampler extends SynthNode {
       this.node.start(+startTime || 0);
       return;
     }
-    this.node.start(+startTime || 0, loopStart || 0, +duration);
+
+    if (isNaN(duration)) {
+      this.node.start(+startTime || 0, loopStart || 0);
+    } else {
+      this.node.start(+startTime || 0, loopStart || 0, +duration);
+    }
   }
   stop() {
     this.node.stop();
