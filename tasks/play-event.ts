@@ -13,7 +13,10 @@ export function playPlayEvent({ playEvent, startTime = 0 }) {
   console.log('Playing', playEvent.scoreEvent.rate);
   const actualStartTime = startTime + playEvent.scoreEvent.delay;
   playEvent.nodes.forEach((synth) =>
-    synth.play({ startTime: actualStartTime, indefinite: true })
+    synth.play({
+      startTime: actualStartTime,
+      indefinite: !playEvent.scoreEvent.finite,
+    })
   );
   playEvent.started = true;
 }
