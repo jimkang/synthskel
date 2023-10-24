@@ -15,6 +15,7 @@ export function playPlayEvent({ playEvent, startTime = 0 }) {
   playEvent.nodes.forEach((synth) =>
     synth.play({
       startTime: actualStartTime,
+      duration: playEvent.scoreEvent.absoluteLengthSeconds || undefined,
       indefinite: !playEvent.scoreEvent.finite,
     })
   );
