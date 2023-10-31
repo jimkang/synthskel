@@ -8,6 +8,7 @@ export interface ScoreState {
   // Duration ticks is how many ticks it takes for the sounds from this state to fade.
   durationTicks?: number;
   meta?: EventMetadata;
+  grandPause?: boolean;
 }
 
 export interface Loop {
