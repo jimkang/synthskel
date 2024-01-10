@@ -1,56 +1,90 @@
-export function TonalityDiamond({ diamondLimit }) {
-  const diamondSideLength = Math.ceil(diamondLimit / 2);
+// const denomLimit = 32;
+// const tolerance = 1 / 10000;
 
-  var diamondRatios = [];
-
-  for (let row = 0; row < diamondSideLength; ++row) {
-    const denominator = diamondLimit - row;
-    for (let col = 0; col < diamondSideLength; ++col) {
-      const numerator = diamondLimit - col;
-      diamondRatios.push({ numerator, denominator });
-    }
+function range(start, len, step = 1) {
+  var a = [];
+  for (let i = start; a.length < len; i += step) {
+    a.push(i);
   }
+  return a;
+}
 
-  diamondRatios = diamondRatios.map(factorDown);
-  diamondRatios.sort((a, b) => a.denominator - b.denominator);
-
-  // Dedupe.
-  for (let i = diamondRatios.length - 1; i > 0; --i) {
-    let ratio = diamondRatios[i];
-    let prevRatio = diamondRatios[i - 1];
-    if (
-      ratio.numerator === prevRatio.numerator &&
-      ratio.denominator === prevRatio.denominator
-    ) {
-      diamondRatios.splice(i, 1);
-    }
+function fitToOctave(n) {
+  // We're allowing the octave, even though the official tonality diamond doesn't.
+  if (n > 2.0) {
+    return fitToOctave(n / 2);
   }
+  if (n < 1.0) {
+    return fitToOctave(n * 2);
+  }
+  return n;
+}
 
-  var tonalityDiamondPitches = [1, 2].concat(
-    diamondRatios
-      .slice(1)
-      .map(({ numerator, denominator }) => numerator / denominator)
+function compareAsc(a, b) {
+  if (+a < +b) {
+    return -1;
+  }
+  return 1;
+}
+
+function compareDesc(a, b) {
+  if (+a < +b) {
+    return 1;
+  }
+  return -1;
+}
+
+// function compareDenomSizeAsc(a, b) {
+//   if (getDenom(a) < getDenom(b)) {
+//     return -1;
+//   }
+//   return 1;
+// }
+
+// function getDenom(n) {
+//   for (let denom = 1; denom < denomLimit; ++denom) {
+//     if (n % (1 / denom) <= tolerance) {
+//       return denom;
+//     }
+//   }
+//   return denomLimit;
+// }
+
+export function getTonalityDiamond({ diamondLimit }) {
+  const factorCount = ~~(diamondLimit / 2 + 1);
+
+  var oddFactors = range(1, factorCount, 2).map(fitToOctave).sort(compareAsc);
+
+  var reciprocalFactors = [1].concat(
+    range(3, factorCount - 1, 2)
+      .map((n) => 1 / n)
+      .map(fitToOctave)
+      .sort(compareDesc)
   );
 
-  return { pitches: tonalityDiamondPitches, ratios: diamondRatios };
-}
+  var diamondTable = [oddFactors];
 
-function factorDown({ numerator, denominator }) {
-  var commonFactor = findCommonFactor(numerator, denominator);
-  if (commonFactor) {
-    return {
-      numerator: numerator / commonFactor,
-      denominator: denominator / commonFactor,
-    };
+  for (let rowIndex = 1; rowIndex < oddFactors.length; ++rowIndex) {
+    let row = [reciprocalFactors[rowIndex]];
+    for (let colIndex = 1; colIndex < reciprocalFactors.length; ++colIndex) {
+      row.push(fitToOctave(oddFactors[colIndex] * reciprocalFactors[rowIndex]));
+    }
+    diamondTable.push(row);
   }
-  return { numerator, denominator };
-}
 
-// Assumes whole numbers for a and b.
-function findCommonFactor(a, b) {
-  for (let factor = a; factor > 0; --factor) {
-    if ((a / factor) % 1 === 0 && (b / factor) % 1 === 0) {
-      return factor;
+  // console.table(diamondTable);
+
+  // Is it a mistake to get rid of redundancies?
+  var diamondRatioSet = new Set();
+
+  for (let row = 0; row < diamondTable.length; ++row) {
+    for (let col = 0; col < diamondTable[row].length; ++col) {
+      diamondRatioSet.add(diamondTable[row][col]);
     }
   }
+
+  return { pitches: [...diamondRatioSet.values()], table: diamondTable };
 }
+
+// export var tonalityDiamondPitches = diamondRatios; //.sort(compareDenomSizeAsc);
+//console.log(tonalityDiamondPitches);
