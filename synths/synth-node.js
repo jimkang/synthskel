@@ -25,12 +25,7 @@ export class SynthNode {
       throw new Error('No synthNode or raw AudioNode passed to connect.');
     }
   }
-  play({
-    startTime = 0,
-    endTime = undefined,
-    actualStartTime = 0,
-    indefinite = false,
-  }) {
+  play({ startTime = 0, endTime = undefined }) {
     try {
       this.node.start(startTime);
       if (!isNaN(endTime)) {
@@ -293,12 +288,7 @@ export class Panner extends SynthNode {
       isNaN(this.params.rampSeconds) ? 0.1 : +this.params.rampSeconds
     );
   }
-  play({
-    startTime = 0,
-    endTime = undefined,
-    actualStartTime = 0,
-    indefinite = false,
-  }) {}
+  play() {}
 }
 
 // Warning: cancelScheduledValues doesn't cover this.
