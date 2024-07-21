@@ -185,6 +185,84 @@ export class Compressor extends SynthNode {
   }
 }
 
+// TODO: Common base class with Sampler?
+export class Osc extends SynthNode {
+  constructor(ctx, params) {
+    super(ctx, params);
+    this.node = this.ctx.createOscillator();
+    this.node.frequency.value = +this.params.freq;
+    this.rampSeconds = 0.1;
+    if (this.params.rampSeconds) {
+      this.rampSeconds = +this.params.rampSeconds;
+    }
+    this.syncToParams();
+  }
+  cancelScheduledRamps() {
+    this.node.frequency.cancelScheduledValues(this.ctx.currentTime);
+  }
+  syncToParams() {
+    if (this.params.sampleDetune) {
+      this.node.detune.value = +this.params.sampleDetune;
+    }
+    if (this.params.freq && this.params.freq !== this.node.frequency.value) {
+      if (isNaN(this.node.frequency.value)) {
+        this.node.frequency.value = +this.params.freq;
+      } else {
+        if (this.params.enableRamp) {
+          console.log(
+            'sliding from',
+            this.node.frequency.value,
+            'to',
+            this.params.freq,
+            'at',
+            this.ctx.currentTime + this.rampSeconds
+          );
+          homemadeLinearRamp(
+            this.node.frequency,
+            +this.params.freq,
+            this.ctx,
+            +this.rampSeconds
+          );
+        } else {
+          this.node.frequency.value = +this.params.freq;
+        }
+      }
+    }
+
+    if (this.params.loop) {
+      this.node.loop = this.params.loop;
+      if (!isNaN(this.params.loopStart)) {
+        this.node.loopStart = +this.params.loopStart;
+      }
+      if (!isNaN(this.params.loopEnd)) {
+        this.node.loopEnd = +this.params.loopEnd;
+      }
+    }
+  }
+  playLoop({ startSecs = 0, durationSecs }) {
+    this.node.start(
+      this.ctx.currentTime + +startSecs,
+      +this.params.loopStart,
+      durationSecs
+    );
+  }
+  play({ startTime, loopStart, duration, indefinite }) {
+    if (indefinite) {
+      this.node.start(+startTime || 0);
+      return;
+    }
+
+    if (isNaN(duration)) {
+      this.node.start(+startTime || 0, loopStart || 0);
+    } else {
+      this.node.start(+startTime || 0, loopStart || 0, +duration);
+    }
+  }
+  stop() {
+    this.node.stop();
+  }
+}
+
 export class Sampler extends SynthNode {
   constructor(ctx, params) {
     super(ctx, params);

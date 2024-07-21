@@ -23,6 +23,7 @@ export function playPlayEvent({ playEvent, startTime = 0 }) {
 }
 
 export function newPlayEventForScoreEvent({
+  GenNodeClass = Sampler,
   scoreEvent,
   sampleBuffer,
   variableSampleBuffers,
@@ -64,9 +65,10 @@ export function newPlayEventForScoreEvent({
   ) {
     eventSampleBuffer = variableSampleBuffers[scoreEvent.variableSampleIndex];
   }
-  var sampler = new Sampler(ctx, {
+  var genNode = new GenNodeClass(ctx, {
     sampleBuffer: eventSampleBuffer, // TODO: Sample buffer by name.
-    playbackRate: scoreEvent.rate,
+    // playbackRate: scoreEvent.rate,
+    freq: scoreEvent.rate * 330,
     loop: !!scoreEvent.loop,
     loopStart: scoreEvent?.loop?.loopStartSeconds,
     loopEnd: scoreEvent?.loop?.loopEndSeconds,
@@ -87,11 +89,11 @@ export function newPlayEventForScoreEvent({
     rampSeconds: tickLength,
   });
 
-  sampler.connect({ synthNode: envelope, audioNode: null });
+  genNode.connect({ synthNode: envelope, audioNode: null });
   envelope.connect({ synthNode: panner, audioNode: null });
 
-  // var nodes: SynthNode[] = [sampler, envelope, panner];
-  var nodes = [sampler, envelope, panner];
+  // var nodes: SynthNode[] = [genNode, envelope, panner];
+  var nodes = [genNode, envelope, panner];
   if (ampFactor !== 1.0) {
     let gain = new Gain(ctx, { gain: ampFactor });
     panner.connect({ synthNode: gain, audioNode: null });
