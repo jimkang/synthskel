@@ -32,6 +32,7 @@ export function newPlayEventForScoreEvent({
   slideMode,
   envelopeCurve,
   ampFactor = 1.0,
+  baseFreq = 329.628, // E4
   getEnvelopeLengthForScoreEvent,
 }) {
   // }: {
@@ -68,7 +69,8 @@ export function newPlayEventForScoreEvent({
   var genNode = new GenNodeClass(ctx, {
     sampleBuffer: eventSampleBuffer, // TODO: Sample buffer by name.
     // playbackRate: scoreEvent.rate,
-    freq: scoreEvent.rate * 330,
+    freq: scoreEvent.rate * baseFreq,
+    baseFreq,
     loop: !!scoreEvent.loop,
     loopStart: scoreEvent?.loop?.loopStartSeconds,
     loopEnd: scoreEvent?.loop?.loopEndSeconds,
