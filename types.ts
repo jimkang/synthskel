@@ -31,6 +31,7 @@ export interface ScoreEvent {
   rest?: boolean;
   absoluteLengthSeconds?: number;
   finite?: boolean;
+  reverb?: boolean;
 }
 
 export interface EventMetadata {
