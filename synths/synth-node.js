@@ -1,4 +1,5 @@
 //var SoundbankReverb = require('soundbank-reverb');
+// import wt from './wave-tables/Bass';
 
 export var adsrCurve = new Float32Array([
   0, 0.5, 1, 1, 1, 1, 0.95, 0.9, 0.8, 0.72, 0.6, 0.3, 0.1, 0,
@@ -26,13 +27,15 @@ export class SynthNode {
     }
   }
   play({ startTime = 0, endTime = undefined }) {
-    try {
-      this.node.start(startTime);
-      if (!isNaN(endTime)) {
-        this.node.stop(endTime);
+    if (this.node.start) {
+      try {
+        this.node.start(startTime);
+        if (!isNaN(endTime)) {
+          this.node.stop(endTime);
+        }
+      } catch (e) {
+        console.log(e);
       }
-    } catch (e) {
-      console.log(e);
     }
   }
 }
@@ -195,6 +198,23 @@ export class Osc extends SynthNode {
     if (this.params.rampSeconds) {
       this.rampSeconds = +this.params.rampSeconds;
     }
+
+    const real = new Float32Array(2);
+    const imag = new Float32Array(2);
+
+    real[0] = 0;
+    imag[0] = 0;
+    real[1] = 1;
+    imag[1] = 0;
+
+    const wave = ctx.createPeriodicWave(real, imag);
+
+    this.node.setPeriodicWave(wave);
+
+    // this.node.type = this.params.type || 'sine';
+    // const wave = ctx.createPeriodicWave(wt.real, wt.imag);
+    // this.node.setPeriodicWave(wave);
+
     this.syncToParams();
   }
   cancelScheduledRamps() {
@@ -383,5 +403,13 @@ function homemadeLinearRamp(param, targetVal, ctx, durationSeconds) {
     if (progress < 1) {
       window.requestAnimationFrame(updateParam);
     }
+  }
+}
+
+export class Reverb extends SynthNode {
+  constructor(ctx, params) {
+    super(ctx, params);
+    this.node = ctx.createConvolver();
+    this.node.buffer = params.buffer;
   }
 }
