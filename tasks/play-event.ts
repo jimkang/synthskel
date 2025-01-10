@@ -10,7 +10,6 @@ export function playPlayEvent({ playEvent, startTime = 0 }) {
     return;
   }
 
-  console.log('Playing', playEvent.scoreEvent.rate);
   const actualStartTime = startTime + playEvent.scoreEvent.delay;
   playEvent.nodes.forEach((synth) =>
     synth.play({

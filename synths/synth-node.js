@@ -229,14 +229,14 @@ export class Osc extends SynthNode {
         this.node.frequency.value = +this.params.freq;
       } else {
         if (this.params.enableRamp) {
-          console.log(
-            'sliding from',
-            this.node.frequency.value,
-            'to',
-            this.params.freq,
-            'at',
-            this.ctx.currentTime + this.rampSeconds
-          );
+          // console.log(
+          //   'sliding from',
+          //   this.node.frequency.value,
+          //   'to',
+          //   this.params.freq,
+          //   'at',
+          //   this.ctx.currentTime + this.rampSeconds
+          // );
           homemadeLinearRamp(
             this.node.frequency,
             +this.params.freq,
@@ -309,14 +309,14 @@ export class Sampler extends SynthNode {
         this.node.playbackRate.value = +this.params.playbackRate;
       } else {
         if (this.params.enableRamp) {
-          console.log(
-            'sliding from',
-            this.node.playbackRate.value,
-            'to',
-            this.params.playbackRate,
-            'at',
-            this.ctx.currentTime + this.rampSeconds
-          );
+          // console.log(
+          //   'sliding from',
+          //   this.node.playbackRate.value,
+          //   'to',
+          //   this.params.playbackRate,
+          //   'at',
+          //   this.ctx.currentTime + this.rampSeconds
+          // );
           homemadeLinearRamp(
             this.node.playbackRate,
             +this.params.playbackRate,
