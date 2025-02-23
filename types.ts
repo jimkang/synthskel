@@ -9,6 +9,7 @@ export interface ScoreState {
   durationTicks?: number;
   meta?: EventMetadata;
   grandPause?: boolean;
+  mainEnvelopeCurve?: number[];
 }
 
 export interface Loop {
