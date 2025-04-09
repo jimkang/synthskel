@@ -33,6 +33,7 @@ export interface ScoreEvent {
   absoluteLengthSeconds?: number;
   finite?: boolean;
   reverb?: boolean;
+  reverbMix?: number;
   envelopeCurve?: number[];
 }
 

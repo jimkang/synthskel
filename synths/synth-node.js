@@ -74,6 +74,11 @@ export class Gain extends SynthNode {
   cancelScheduledRamps() {
     this.node.gain.cancelScheduledValues(this.ctx.currentTime);
   }
+  syncToParams() {
+    if (!isNaN(this.params.gain)) {
+      this.node.gain.value = +this.params.gain;
+    }
+  }
   play() {}
 }
 
@@ -118,58 +123,6 @@ export class Envelope extends SynthNode {
     );
   }
 }
-
-// export class ZeroEndsEnvelope extends SynthNode {
-//   constructor(ctx, params) {
-//     super(ctx, params);
-//     this.node = this.ctx.createGain();
-//     if (!params.envelopeLength) {
-//       throw new Error('ZeroEndsEnvelope must have an envelopeLength');
-//     }
-
-//     const envelopeLength = +params.envelopeLength;
-
-//     this.rampUpTime = envelopeLength / 20;
-//     if (this.rampUpTime < 0.1) {
-//       this.rampUpTime = 0.1;
-//     } else if (this.rampUpTime > 1.0) {
-//       this.rampUpTime = 1.0;
-//     }
-
-//     var rampDownTime = envelopeLength / 10;
-//     if (rampDownTime < 0.1) {
-//       rampDownTime = 0.1;
-//     } else if (rampDownTime > 2.0) {
-//       rampDownTime = 2.0;
-//     }
-//     this.rampDownTime = rampDownTime;
-//     this.rampDownStart = envelopeLength - rampDownTime;
-//   }
-//   play() {
-//     // this.node.gain.value = 0;
-//     this.node.gain.exponentialRampToValueAtTime(
-//       1.0,
-//       this.ctx.currentTime + this.rampUpTime
-//     );
-//     this.node.gain.setTargetAtTime(
-//       0.0,
-//       this.ctx.currentTime + this.rampDownStart,
-//       this.rampDownTime / 5
-//     );
-//   }
-// }
-
-//export class Reverb extends SynthNode {
-//constructor(ctx, params) {
-//super(ctx, params);
-//this.node = this.ctx.createGain();
-//this.node = SoundbankReverb(ctx);
-//this.node.time = this.params.reverbSeconds;
-//this.node.wet.value = this.params.reverbWet;
-//this.node.dry.value = this.params.reverbDry;
-//}
-//play() {}
-//}
 
 export class Compressor extends SynthNode {
   constructor(ctx, params) {
